@@ -23,12 +23,15 @@ class TelegramService {
     }, {
       command: 'connect',
       description: 'Connect Admob account'
+    }, {
+      command: 'disconnect',
+      description: 'Disconnect Admob account'
     }]);
 
     this.listen(bot).then(() => null);
   }
 
-  async listen(bot) {
+  async listen(bot: TelegramBot) {
     bot.onText(/\/start/, async (msg) => {
       const isFirstUse = await userService.checkFirstUse(msg);
       await userService.prepareUser(msg);
@@ -70,9 +73,38 @@ class TelegramService {
     });
     bot.onText(/\/statistics/, async (msg) => {
       const user = await userService.prepareUser(msg);
-      const connection = await admobService.getUserConnection(user);
       // show message
-      await admobService.getStatistics(connection);
+      await admobService.getStatistics(user);
+    });
+    bot.onText(/\/disconnect/, async (msg) => {
+      const user = await userService.prepareUser(msg);
+      // show message
+      await admobService.disconnect(user);
+    });
+    bot.on('callback_query', async (msg) => {
+      const data = msg.data;
+      const action = data.split(':')[0];
+      const user = await userService.getUserByTelegramId(msg.from.id);
+      const connection = await admobService.getUserConnection(user);
+      switch (action) {
+        case "setDefaultAcc":
+          const accountId = data.split(':')[1];
+          const admob = await admobService.getAdmobAuthorized(connection);
+          const accounts = await admobService.getAdmobPubAccounts(admob);
+          const pickedAccount = accounts.find(acc => acc.name === accountId);
+          console.log(accounts, accountId);
+          if (!pickedAccount) {
+            await bot.sendMessage(msg.from.id, "Invalid account.");
+          } else {
+            connection.defaultAccount = pickedAccount;
+            await connection.save();
+            await bot.sendMessage(msg.from.id, 'Default publisher account has been set. Now you can use command /statistics to see revenue...');
+          }
+          break;
+        default:
+          await bot.sendMessage(msg.from.id, "Invalid action.");
+          break;
+      }
     });
   };
 }

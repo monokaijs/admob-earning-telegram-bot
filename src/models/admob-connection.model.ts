@@ -7,10 +7,16 @@ const schema = new mongoose.Schema<AdmobConnection>({
   owner: {
     type: mongoose.Schema.Types.ObjectId,
   },
+  defaultAccount: {
+    name: String,
+    publisherId: String,
+    reportingTimeZone: String,
+    currencyCode: String,
+  },
   idToken: String,
   accessToken: String,
   refreshToken: String,
-  expirationTime: Number
+  expirationTime: Number,
 }, {
   timestamps: true,
   toJSON: {virtuals: true},

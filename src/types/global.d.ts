@@ -8,6 +8,7 @@ interface User {
 
 interface AdmobConnection {
   owner: User | import("mongoose").Schema.Types.ObjectId;
+  defaultAccount: import('googleapis').admob_v1beta.Schema$PublisherAccount;
   accessToken: string;
   idToken: string;
   refreshToken: string;
