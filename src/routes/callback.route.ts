@@ -27,9 +27,7 @@ callbackRoute.get('/', async (req, res) => {
       await admobService.connectFromOauth(user, tokens);
 
       await telegramService.bot.sendMessage(user.telegramId, 'Admob Connected.');
-      res.json({
-        ok: true
-      });
+      res.send("Connected, please return to Telegram Bot.");
     } else {
       res.send("Failed to verify request.");
     }
