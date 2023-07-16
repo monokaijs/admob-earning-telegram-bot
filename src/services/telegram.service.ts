@@ -16,7 +16,10 @@ class TelegramService {
 
     await bot.setMyCommands([{
       command: 'start',
-      description: 'Open bot main menu'
+      description: 'Initialize the chat'
+    }, {
+      command: 'menu',
+      description: 'Show menu with options'
     }, {
       command: 'connect',
       description: 'Connect Admob account'
@@ -28,6 +31,7 @@ class TelegramService {
   async listen(bot) {
     bot.onText(/\/start/, async (msg) => {
       const isFirstUse = await userService.checkFirstUse(msg);
+      await userService.prepareUser(msg);
       if (isFirstUse) {
         await bot.sendMessage(msg.from.id, 'Hello there, this is the first time you be there. To see the statistics, this bot must' +
           'have access to your Admob data.\n\n' +
@@ -54,7 +58,19 @@ class TelegramService {
           ]
         }
       })
-    })
+    });
+    bot.onText(/\/menu/, async (msg) => {
+      // show message
+      const user = await userService.prepareUser(msg);
+      if (await admobService.isUserConnected(user)) {
+        await bot.sendMessage(msg.chat.id, '/statistics - Show statistics');
+      } else {
+        await bot.sendMessage(msg.chat.id, 'You have not connected to Admob. Please connect first using /connect command.');
+      }
+    });
+    bot.onText(/\/statistics/, async (msg) => {
+      // show message
+    });
   };
 }
 

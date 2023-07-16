@@ -56,6 +56,12 @@ class AdmobService {
 
     return connection;
   }
+
+  async isUserConnected(user: UserDoc) {
+    return !!(await AdmobConnectionModel.findOne({
+      owner: user._id,
+    }));
+  }
 }
 
 export default new AdmobService();
