@@ -69,7 +69,10 @@ class TelegramService {
       }
     });
     bot.onText(/\/statistics/, async (msg) => {
+      const user = await userService.prepareUser(msg);
+      const connection = await admobService.getUserConnection(user);
       // show message
+      await admobService.getStatistics(connection);
     });
   };
 }

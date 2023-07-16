@@ -3,7 +3,7 @@ import process from "process";
 import {google, oauth2_v2} from "googleapis";
 import {Credentials} from "google-auth-library";
 import {UserDoc} from "@src/models/user.model";
-import {AdmobConnectionModel} from "@src/models/admob-connection.model";
+import {AdmobConnectionDoc, AdmobConnectionModel} from "@src/models/admob-connection.model";
 
 class AdmobService {
   credentials = JSON.parse(fs.readFileSync(process.env.CREDENTIAL_FILE_PATH, {
@@ -11,6 +11,20 @@ class AdmobService {
   })).web;
 
   register() {
+  }
+
+  async getStatistics(connection: AdmobConnectionDoc) {
+    const authClient = await this.getOauthClient();
+    authClient.setCredentials({
+      access_token: connection.accessToken,
+      id_token: connection.idToken,
+      refresh_token: connection.refreshToken,
+    });
+    const admob = google.admob('v1beta');
+    admob.context.google._options.auth = authClient;
+    const {data: {account: accounts}} = await admob.accounts.list();
+    console.log('accounts', accounts);
+
   }
 
   getOauthClient() {
@@ -61,6 +75,12 @@ class AdmobService {
     return !!(await AdmobConnectionModel.findOne({
       owner: user._id,
     }));
+  }
+
+  async getUserConnection(user: UserDoc) {
+    return AdmobConnectionModel.findOne({
+      owner: user._id,
+    })
   }
 }
 
