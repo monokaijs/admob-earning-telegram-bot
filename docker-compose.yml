@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  admob-tracker:
+    build: ./Dockerfile
+    image: monokaijs/admob-tracker:latest
+    env_file:
+      - ./.env
+      - ./.env.local
+
+  mongodb:
+    image: mongo:6-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - data:/data/db
+volumes:
+  data:
