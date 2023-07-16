@@ -7,6 +7,7 @@ const schema = new mongoose.Schema<AdmobConnection>({
   owner: {
     type: mongoose.Schema.Types.ObjectId,
   },
+  idToken: String,
   accessToken: String,
   refreshToken: String,
   expirationTime: Number

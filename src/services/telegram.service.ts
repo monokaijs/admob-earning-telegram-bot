@@ -1,6 +1,8 @@
 import TelegramBot from "node-telegram-bot-api";
 import userService from "@src/services/user.service";
 import admobService from "@src/services/admob.service";
+import jwt from "jsonwebtoken";
+import process from "process";
 
 class TelegramService {
   bot: TelegramBot;
@@ -37,12 +39,17 @@ class TelegramService {
       }
     });
     bot.onText(/\/connect/, async (msg) => {
+      const user = await userService.prepareUser(msg);
+      const token = jwt.sign({
+        user: user._id,
+        creationTime: new Date().getTime(),
+      }, process.env.JWT_SECRET);
       await bot.sendMessage(msg.chat.id, "Click below button to connect", {
         reply_markup: {
           inline_keyboard: [
             [{
               text: "Connect",
-              url: admobService.getAuthUrl('code-smt'),
+              url: admobService.getAuthUrl(token),
             }]
           ]
         }

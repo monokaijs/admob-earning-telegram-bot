@@ -9,6 +9,7 @@ interface User {
 interface AdmobConnection {
   owner: User | import("mongoose").Schema.Types.ObjectId;
   accessToken: string;
+  idToken: string;
   refreshToken: string;
   expirationTime: number;
 }
