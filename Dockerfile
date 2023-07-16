@@ -21,7 +21,6 @@ WORKDIR /home/app
 COPY --from=builder --chown=node:node /home/app/package*.json ./
 COPY --from=builder --chown=node:node /home/app/node_modules/ ./node_modules/
 COPY --from=builder --chown=node:node /home/app/dist/ ./dist/
-COPY --from=builder --chown=node:node /home/app/static/ ./static/
 
 CMD ["yarn", "start:prod"]
 
