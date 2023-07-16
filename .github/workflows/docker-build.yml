@@ -30,4 +30,4 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: monokaijs/admob-telegram:latest
+          tags: monokaijs/admob-tracker:latest
